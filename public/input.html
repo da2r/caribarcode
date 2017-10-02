@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Input Barcode</title>
+
+	<link rel="stylesheet" type="text/css" href="/static/style.css">
+	<script src="/static/jquery-3.2.1.min.js"></script>
+	<script src="/static/knockout-3.4.2.js"></script>
+</head>
+
+<body>
+	<input data-bind="textInput: upc">
+	<input data-bind="textInput: name">
+	<button data-bind="click: input">SUBMIT</button>
+
+	<script>
+		var model = {
+			upc: ko.observable('9383292'),
+			name: ko.observable('Test Item'),
+			input: function () {
+				$.ajax('/api/input', {
+					data: {
+						upc: model.upc(),
+						name: model.name()
+					},
+					method: 'POST',
+					dataType: 'json'
+				}).done(function (response) {
+					console.log(response);
+					if (response.s) {
+						alert('Success');
+					} else {
+						alert(JSON.stringify(response));
+					}
+
+				})
+			}
+		};
+
+		ko.applyBindings(model);
+	</script>
+</body>
+
+</html>

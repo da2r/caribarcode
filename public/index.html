@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Cari Barcode</title>
+
+	<link rel="stylesheet" type="text/css" href="/static/style.css">
+	<script src="/static/jquery-3.2.1.min.js"></script>
+	<script src="/static/knockout-3.4.2.js"></script>
+</head>
+
+<body>
+	<input data-bind="textInput: upc" placeholder="Masukan Barcode">
+	<button data-bind="click: lookup">SEARCH</button>
+
+	<pre id="output">
+		
+	</pre>
+
+	<script>
+		var model = {
+			upc: ko.observable('42406397285'),
+			lookup: function () {
+				$.ajax('/api/lookup', {
+					data: {
+						upc: model.upc()
+					},
+					method: 'POST',
+					dataType: 'json'
+				}).done(function (response) {
+					console.log(response);
+					if (response.s) {
+						var msg = 'UPC ' + model.upc() + ' => ' + response.d.name;
+						$('#output').html(msg);
+					} else {
+						$('#output').html('- not record found -');
+					}
+					
+				})
+			}
+		}
+
+		ko.applyBindings(model);
+	</script>
+</body>
+
+</html>
